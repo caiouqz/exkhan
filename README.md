@@ -14,7 +14,7 @@ Um **bookmarklet** é um favorito que executa um pequeno código quando você cl
 2. Abra a Khan Academy e clique no favorito. O painel deve aparecer após a tela de abertura.
 
 ```javascript
-javascript:fetch('https://cdn.jsdelivr.net/gh/caiouqz/Exkhan@main/Exkhan.js').then(r=>{if(!r.ok)throw new Error('Não foi possível carregar o Exkhan: '+r.status);return r.text()}).then(code=>(0,eval)(code)).catch(e=>alert(e.message));
+javascript:fetch('https://cdn.jsdelivr.net/gh/caiouqz/exkhan@main/exkhan.js').then(r=>{if(!r.ok)throw new Error('Não foi possível carregar o Exkhan: '+r.status);return r.text()}).then(code=>(0,eval)(code)).catch(e=>alert(e.message));
 ```
 
 O favorito precisa ser acionado novamente após um recarregamento completo da página; ele não é uma extensão e não garante inicialização antes do carregamento das questões.
