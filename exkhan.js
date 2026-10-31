@@ -22,7 +22,6 @@
   if (oldPanel) { const close = oldPanel.querySelector('#ka-close'); if (close) close.click(); else oldPanel.remove(); }
   const panel = document.createElement('div'); panel.id = 'khan-algebra-panel';
   panel.style.cssText = 'position:fixed;top:20px;right:20px;z-index:2147483647;background:#111;color:#f7f7f7;padding:20px;border:1px solid #454545;border-radius:16px;font:14px/1.45 Arial,sans-serif;box-shadow:0 12px 38px #0009;width:290px;box-sizing:border-box';
-  panel.innerHTML = '<div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px"><strong style="font-size:22px;letter-spacing:-.6px">Exkhan v47</strong><span style="font-size:11px;color:#aaa">by caioopj</span></div><p id="ka-status" style="background:#202020;color:#ddd;padding:11px;border:1px solid #333;border-radius:9px;min-height:20px;margin:0 0 12px">Pronto para calcular.</p><div style="display:flex;gap:7px;flex-wrap:wrap"><button id="ka-fill" style="background:#fff;color:#111;border:0;border-radius:7px;padding:9px 11px;font-weight:700;cursor:pointer">Calcular</button><button id="ka-auto" style="background:#eee;color:#111;border:0;border-radius:7px;padding:9px 11px;font-weight:700;cursor:pointer">Iniciar automático</button><button id="ka-close" style="background:#222;color:#ddd;border:1px solid #555;border-radius:7px;padding:8px 11px;cursor:pointer">Fechar</button></div><p style="margin:12px 0 0;font-size:11px;color:#aaa">Expressões, tabelas, gráficos e reta numérica</p>';
   panel.innerHTML = '<div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px"><strong style="font-size:22px;letter-spacing:-.6px">Exkhan v48</strong><span style="font-size:11px;color:#aaa">by caioopj</span></div><p id="ka-status" style="background:#202020;color:#ddd;padding:11px;border:1px solid #333;border-radius:9px;min-height:20px;margin:0 0 12px">Pronto para calcular.</p><div style="display:flex;gap:7px;flex-wrap:wrap"><button id="ka-fill" style="background:#fff;color:#111;border:0;border-radius:7px;padding:9px 11px;font-weight:700;cursor:pointer">Calcular</button><button id="ka-auto" style="background:#eee;color:#111;border:0;border-radius:7px;padding:9px 11px;font-weight:700;cursor:pointer">Iniciar automático</button><button id="ka-close" style="background:#222;color:#ddd;border:1px solid #555;border-radius:7px;padding:8px 11px;cursor:pointer">Fechar</button></div><p style="margin:12px 0 0;font-size:11px;color:#aaa">Expressões, tabelas, gráficos e reta numérica</p>';
   document.body.append(panel);
   const status = panel.querySelector('#ka-status');
@@ -556,14 +555,6 @@
   const panel=document.getElementById('khan-algebra-panel');if(!panel)return;
   const status=panel.querySelector('#ka-status'), button=document.createElement('button');
   button.textContent='Ativar spoof experimental';button.style.cssText='margin-top:8px;background:#222;color:#eee;border:1px solid #555;border-radius:7px;padding:8px;cursor:pointer';panel.appendChild(button);
-  const keyArea=document.createElement('div');keyArea.style.cssText='display:none;margin-top:10px';
-  const note=document.createElement('p');note.textContent='A questão será enviada ao OpenRouter; o uso pode gerar custos.';note.style.cssText='font-size:12px;color:#bbb;margin:0 0 6px';
-  const keyInput=document.createElement('input');keyInput.type='password';keyInput.autocomplete='off';keyInput.placeholder='Cole sua chave OpenRouter';keyInput.setAttribute('aria-label','Chave OpenRouter');keyInput.style.cssText='width:100%;box-sizing:border-box;background:#222;color:#fff;border:1px solid #666;border-radius:7px;padding:8px';
-  const confirm=document.createElement('button');confirm.textContent='Confirmar e ativar';confirm.style.cssText='margin-top:7px;background:#fff;color:#111;border:0;border-radius:7px;padding:8px;cursor:pointer';
-  note.textContent='A questão será enviada ao OpenRouter e pode gerar custos. A chave será salva no armazenamento desta página; outros scripts do site podem acessá-la.';
-  const forget=document.createElement('button');forget.textContent='Apagar chave salva';forget.style.cssText='margin:8px;background:#222;color:#eee;border:1px solid #555;border-radius:7px;padding:8px';
-  forget.onclick=()=>{GM_deleteValue('exkhan_openrouter_key');keyInput.value='';status.textContent='Chave apagada. Recarregue a página para encerrar o modo atual.';};
-  keyArea.append(note,keyInput,confirm);panel.appendChild(keyArea);panel.appendChild(forget);
   panel.style.width='340px';panel.style.maxWidth='calc(100vw - 24px)';panel.style.maxHeight='calc(100vh - 24px)';panel.style.overflowY='auto';
   const vaultKey='exkhan_key_vault_v1', activeKey='exkhan_openrouter_key';
   const drawer=document.createElement('details');drawer.style.cssText='margin-top:12px;padding:10px;background:#1d1d1d;border:1px solid #444;border-radius:9px';
@@ -575,12 +566,6 @@
   const save=document.createElement('button');save.textContent='Salvar e selecionar';save.style.cssText='margin:8px 6px 0 0;background:white;color:#111;border:0;border-radius:7px;padding:8px;cursor:pointer';drawer.appendChild(save);
   const remove=document.createElement('button');remove.textContent='Remover selecionada';remove.style.cssText='margin-top:8px;background:#333;color:white;border:1px solid #666;border-radius:7px;padding:8px;cursor:pointer';drawer.appendChild(remove);panel.appendChild(drawer);
   const closeButton=panel.querySelector('#ka-close');closeButton.style.display='block';closeButton.style.marginTop='10px';panel.appendChild(closeButton);
-  button.onclick=()=>{if(window.__exkhanSpoofActive){status.textContent='Spoof já está ativo nesta página.';return;}keyArea.style.display='block';keyInput.focus();status.textContent='Cole sua chave no campo abaixo e confirme.';};
-  confirm.onclick=()=>{
-    if(window.__exkhanSpoofActive){status.textContent='Spoof já está ativo nesta página.';return;}
-    const key=keyInput.value.trim();if(!key){status.textContent='Informe sua chave OpenRouter.';return;}
-    GM_setValue('exkhan_openrouter_key',key);keyInput.value='';keyArea.style.display='none';
-    const featureConfigs={openRouterKey:key,openRouterModel:'openrouter/free'}, features={questionSpoof:true};
   function readVault(){try{const v=JSON.parse(localStorage.getItem(vaultKey)||'[]');return Array.isArray(v)?v.filter(x=>x&&typeof x.name==='string'&&typeof x.key==='string'&&typeof x.id==='string'):[];}catch(e){return [];}}
   function writeVault(v){localStorage.setItem(vaultKey,JSON.stringify(v));}
   function renderVault(){const vault=readVault(),active=GM_getValue(activeKey,'');list.replaceChildren();const empty=document.createElement('option');empty.value='';empty.textContent='Selecione uma chave';list.appendChild(empty);for(const item of vault){const o=document.createElement('option');o.value=item.id;o.textContent=item.name;list.appendChild(o);if(item.key===active)list.value=item.id;}if(!active)list.value='';}
@@ -1428,8 +1413,6 @@ window.fetch = async function(input, init) {
       if(verify&&!verify.disabled&&verify.getAttribute('aria-disabled')!=='true'&&!submittedFor){submittedFor=root;verify.click();status.textContent='Resposta enviada; aguardando resultado.';}
     },150);
     window.__exkhanController={original:originalFetch,hook:window.fetch,timer:automation};
-  };
-  try {const saved=GM_getValue('exkhan_openrouter_key','');if(saved){keyInput.value=saved;confirm.onclick();}} catch(e){status.textContent='Não foi possível carregar a chave salva.';}
   }
   try {if(GM_getValue(activeKey,''))activateSpoof();} catch(e){status.textContent='Não foi possível carregar a chave salva.';}
 })();
