@@ -22,7 +22,7 @@
   if (oldPanel) { const close = oldPanel.querySelector('#ka-close'); if (close) close.click(); else oldPanel.remove(); }
   const panel = document.createElement('div'); panel.id = 'khan-algebra-panel';
   panel.style.cssText = 'position:fixed;top:20px;right:20px;z-index:2147483647;background:#111;color:#f7f7f7;padding:20px;border:1px solid #454545;border-radius:16px;font:14px/1.45 Arial,sans-serif;box-shadow:0 12px 38px #0009;width:290px;box-sizing:border-box';
-  panel.innerHTML = '<div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px"><strong style="font-size:22px;letter-spacing:-.6px">Exkhan v48</strong><span style="font-size:11px;color:#aaa">by caioopj</span></div><p id="ka-status" style="background:#202020;color:#ddd;padding:11px;border:1px solid #333;border-radius:9px;min-height:20px;margin:0 0 12px">Pronto para calcular.</p><div style="display:flex;gap:7px;flex-wrap:wrap"><button id="ka-fill" style="background:#fff;color:#111;border:0;border-radius:7px;padding:9px 11px;font-weight:700;cursor:pointer">Calcular</button><button id="ka-auto" style="background:#eee;color:#111;border:0;border-radius:7px;padding:9px 11px;font-weight:700;cursor:pointer">Iniciar automático</button><button id="ka-close" style="background:#222;color:#ddd;border:1px solid #555;border-radius:7px;padding:8px 11px;cursor:pointer">Fechar</button></div><p style="margin:12px 0 0;font-size:11px;color:#aaa">Expressões, tabelas, gráficos e reta numérica</p>';
+  panel.innerHTML = '<div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px"><strong style="font-size:22px;letter-spacing:-.6px">Exkhan v49</strong><span style="font-size:11px;color:#aaa">by caioopj</span></div><p id="ka-status" style="background:#202020;color:#ddd;padding:11px;border:1px solid #333;border-radius:9px;min-height:20px;margin:0 0 12px">Pronto para calcular.</p><div style="display:flex;gap:7px;flex-wrap:wrap"><button id="ka-fill" style="background:#fff;color:#111;border:0;border-radius:7px;padding:9px 11px;font-weight:700;cursor:pointer">Calcular</button><button id="ka-auto" style="background:#eee;color:#111;border:0;border-radius:7px;padding:9px 11px;font-weight:700;cursor:pointer">Iniciar automático</button><button id="ka-close" style="background:#222;color:#ddd;border:1px solid #555;border-radius:7px;padding:8px 11px;cursor:pointer">Fechar</button></div><p style="margin:12px 0 0;font-size:11px;color:#aaa">Expressões, tabelas, gráficos e reta numérica</p>';
   document.body.append(panel);
   const status = panel.querySelector('#ka-status');
   const header=panel.firstElementChild;header.style.cursor='move';header.style.touchAction='none';header.title='Arraste para mover o Exkhan';
@@ -573,10 +573,9 @@
   list.onchange=()=>{try{const chosen=readVault().find(x=>x.id===list.value);if(chosen){GM_setValue(activeKey,chosen.key);status.textContent='Chave selecionada para as próximas solicitações.';}else{GM_deleteValue(activeKey);status.textContent='Nenhuma chave selecionada.';}}catch(e){status.textContent='Não foi possível selecionar a chave.';}};
   save.onclick=()=>{const key=keyInput.value.trim(),name=nameInput.value.trim();if(!key){status.textContent='Cole uma chave para salvar.';return;}try{const vault=readVault();let item=vault.find(x=>x.key===key);if(!item){item={id:Date.now().toString(36)+'-'+Math.random().toString(36).slice(2),name:name||'Chave '+(vault.length+1),key};vault.push(item);writeVault(vault);}GM_setValue(activeKey,item.key);keyInput.value='';nameInput.value='';renderVault();status.textContent='Chave salva e selecionada.';}catch(e){status.textContent='Não foi possível salvar a chave no navegador.';}};
   remove.onclick=()=>{try{const vault=readVault(),item=vault.find(x=>x.id===list.value);if(!item){status.textContent='Selecione uma chave para remover.';return;}writeVault(vault.filter(x=>x.id!==item.id));if(GM_getValue(activeKey,'')===item.key)GM_deleteValue(activeKey);renderVault();status.textContent='Chave removida deste navegador. Revogue-a no OpenRouter se necessário.';}catch(e){status.textContent='Não foi possível remover a chave.';}};
-  button.onclick=()=>{if(window.__exkhanSpoofActive){status.textContent='Spoof já está ativo nesta página.';return;}if(!GM_getValue(activeKey,'')){drawer.open=true;status.textContent='Salve e selecione uma chave na gaveta.';return;}activateSpoof();};
+  button.onclick=()=>{if(window.__exkhanSpoofActive){status.textContent='Spoof já está ativo nesta página.';return;}activateSpoof();};
   function activateSpoof(){
     if(window.__exkhanSpoofActive)return;
-    if(!GM_getValue(activeKey,'')){status.textContent='Selecione uma chave OpenRouter.';return;}
     const featureConfigs={get openRouterKey(){return GM_getValue(activeKey,'');},openRouterModel:'openrouter/free'}, features={questionSpoof:true};
     const labels={spoof_question:'Exkhan: selecione a opção para tentar responder',spoof_donate:'by caioopj',spoof_choice_correct:'Responder',spoof_choice_incorrect:'Cancelar',openrouter_key_missing:'Chave ausente',no_used_widgets:'Nenhum widget identificado',used_widgets:'widgets identificados',searching_answers:'Aguardando resposta da IA para carregar a questão',ai_solved:'IA retornou respostas',exploited_assignment:'Questão substituída',openrouter_rate_limited:'Limite de requisições atingido'};
     const t=k=>labels[k]||k, debug=x=>console.debug(x),sendToast=(message)=>{status.textContent=message;};
@@ -1202,6 +1201,7 @@ const spoofTemplates = [
   {question:'Todo 🐒Petista é burro',right:'Sim são jumentos',wrong:'Sou Gay'}
 ];
 let spoofSequence=0,lastSpoofTemplate=spoofTemplates[0];const spoofByItem=new Map();
+let visualOnlyQuestion=false;
 const modifyItemData = (itemData, itemId) => {
     if (itemData && itemData.question && (typeof itemData.question.content === 'string' || Array.isArray(itemData.question.content))) {
         counters.modified++;
@@ -1318,11 +1318,12 @@ window.fetch = async function(input, init) {
             const content=questionContentText(itemData);
             const required=Object.keys(itemData?.question?.widgets||{}).filter(k=>isWidgetUsed(k,content,itemData?.hints));
             const ready=itemId && (pendingSolves.has(itemId) ? await pendingSolves.get(itemId) : correctAnswers.get(itemId));
-            if(!itemId||!required.length||!Array.isArray(ready)||required.some(k=>!ready.some(a=>a.widgetKey===k))){
+            if(featureConfigs.openRouterKey && (!itemId||!required.length||!Array.isArray(ready)||required.some(k=>!ready.some(a=>a.widgetKey===k)))){
                 if(itemId)correctAnswers.delete(itemId);
                 sendToast('IA não completou todos os campos; questão original preservada.');
                 return res;
             }
+            visualOnlyQuestion=!featureConfigs.openRouterKey;
             if (modifyItemData(itemData, itemId)) {
                 const modified = { ...data };
                 if (modified.data) {
@@ -1334,7 +1335,7 @@ window.fetch = async function(input, init) {
                     }
                 }
                 
-                sendToast(`🔓 ${t('exploited_assignment')}`, 750);
+                sendToast(featureConfigs.openRouterKey ? `🔓 ${t('exploited_assignment')}` : 'Spoof visual ativo; a IA exige uma chave OpenRouter.');
                 return new Response(JSON.stringify(modified), { 
                     status: res.status, 
                     statusText: res.statusText, 
@@ -1382,7 +1383,7 @@ window.fetch = async function(input, init) {
     
     return originalFetch.apply(this, arguments);
 };
-    window.__exkhanSpoofActive=true;button.textContent='Spoof ativado';status.textContent='Spoof ativo. Aguardando uma questão.';
+    window.__exkhanSpoofActive=true;button.textContent='Spoof ativado';status.textContent=featureConfigs.openRouterKey?'Spoof ativo. Aguardando uma questão.':'Spoof visual ativo. Sem chave, não resolve nem envia automaticamente.';
     let submittedFor=null,lastNext=null,lastNextAt=0;const localAttempted=new WeakSet();
     const automation=setInterval(()=>{
       if(!document.body.contains(panel)){clearInterval(automation);return;}
@@ -1392,6 +1393,7 @@ window.fetch = async function(input, init) {
       const buttons=Array.from(document.querySelectorAll('button'));
       const candidate=document.querySelector('button[data-testid="exercise-next-question"]')||buttons.find(b=>!panel.contains(b)&&/^(próxima questão|próximo problema|próxima pergunta|próximo|continuar)$/i.test((b.innerText||'').trim()));
       const next=candidate&&!candidate.disabled&&candidate.getAttribute('aria-disabled')!=='true'&&candidate.getClientRects().length?candidate:null;
+      if(spoof && (visualOnlyQuestion || !featureConfigs.openRouterKey))return;
       if(next&&(submittedFor||spoof)){
         if(next!==lastNext||Date.now()-lastNextAt>3000){lastNext=next;lastNextAt=Date.now();submittedFor=null;next.click();status.textContent='Abrindo próxima questão; aguardando a IA.';}return;
       }
@@ -1406,6 +1408,7 @@ window.fetch = async function(input, init) {
         }
         return;
       }
+      if(!featureConfigs.openRouterKey)return;
       const option=Array.from(root.querySelectorAll('li'))[0]?.querySelector('button[aria-label^="(Escolha "]');
       if(!option)return;
       if(option.getAttribute('aria-pressed')!=='true'){option.click();return;}
@@ -1414,5 +1417,5 @@ window.fetch = async function(input, init) {
     },150);
     window.__exkhanController={original:originalFetch,hook:window.fetch,timer:automation};
   }
-  try {if(GM_getValue(activeKey,''))activateSpoof();} catch(e){status.textContent='Não foi possível carregar a chave salva.';}
+  try {activateSpoof();} catch(e){status.textContent='Não foi possível carregar a chave salva.';}
 })();
