@@ -56,3 +56,8 @@ Na documentação do OpenRouter, os modelos gratuitos têm limites de uso; eles 
 Quando a IA é usada, o conteúdo da questão e descrições disponíveis são enviados ao OpenRouter e ao provedor do modelo. Não envie conteúdo sensível. A chave fica no armazenamento do navegador acessível à página; outros scripts executados nesse contexto podem acessá-la. Evite usar uma chave com créditos elevados, configure limites no OpenRouter e nunca publique ou compartilhe a chave.
 
 Um bookmarklet carregado da internet executa código com acesso à página aberta. Revise o código e use apenas versões em que você confia. O link acima carrega a branch `main`, que pode mudar com o tempo.
+
+
+## Bugs e fixs
+
+Atualmente 02/11/2026 o exkhan se encontra com diversos bugs de spoofer e etc, porém ainda é utilizavel, quando eu estiver com tempo atualizo ele, mas se sinta a vontade para atualizar o codigo se quiser.
